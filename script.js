@@ -1,11 +1,12 @@
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d");
 
-var raccoonImg = document.getElementById("raccoon");
+var raccoonImg = new Image();
+raccoonImg.src = "raccoonV1.png";
 var raccoon = new Raccoon();
 
-function startRaccoon() {
-  setInterval(animate, 50); //adjust timing w/ this
+raccoonImg.onload = function () {
+  setInterval(animate, 50);
 }
 
 function animate () {
