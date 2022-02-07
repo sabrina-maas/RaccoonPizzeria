@@ -1,19 +1,30 @@
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d");
 
+/*var testThing = new InteractableObject("test", 40, 40, 100, 100);
+
+var walls = [];
+walls.push(testThing);
+
 var raccoonImg = new Image();
-raccoonImg.src = "raccoonV1.png";
+raccoonImg.src = "images/raccoonV1.png";
 var raccoon = new Raccoon();
+
 
 raccoonImg.onload = function () {
   setInterval(animate, 50);
 }
 
+
+
 function animate () {
   clearBackground();
   raccoon.move();
   raccoon.draw();
-}
+
+  testThing.draw();
+}*/
+
 
 function clearBackground() {
   ctx.fillStyle = "white";
@@ -57,70 +68,114 @@ function handleKeyUp(event) {
   }
 }
 
+function detectCollision(obj1, obj2) {
+	var a = obj1.x < obj2.x + obj2.width;
+	var b = obj1.x + obj1.width > obj2.x;
+	var c = obj1.y < obj2.y + obj2.height;
+	var d = obj1.y + obj1.height > obj2.y;
 
+	console.log(`X ${a} ${b} ${c} ${d}`);
 
-function Raccoon() {
-  this.x = 100;
-  this.y = 100;
+	/*return (	obj1.x < obj2.x + obj2.width &&
+				obj1.x + obj1.width > obj2.x &&
+			  obj1.y < obj2.y + obj2.height &&
+			  obj1.y + obj1.height > obj2.y );*/
+	
+	if (raccoon.movingDown) { alert("test: " + a + b + c + d); alert (obj1.x + obj1.width); alert(obj1.x);alert(obj1.y);}
+		
+}
 
-  this.speed = 5;
+class Raccoon {
 
-  this.movingLeft = false;
-	this.movingRight = false;
-	this.movingUp = false;
-	this.movingDown = false;
+	constructor() {
+		this.x = 200;
+		this.y = 200;
 
-  this.goLeft = function() {
+		this.speed = 5;
+
+		this.movingLeft = false;
+		this.movingRight = false;
+		this.movingUp = false;
+		this.movingDown = false;
+	}
+	
+	
+
+	goLeft() {
 		this.stopAll();
 		this.movingLeft = true;
 		//this.currentSpriteSheet = this.leftSpriteSheet;
 		//this.currImage = 0;
 	}
 
-	this.goRight = function() {
+	goRight = function() {
 		this.stopAll();
 		this.movingRight = true;
 		//this.currentSpriteSheet = this.rightSpriteSheet;
 		//this.currImage = 0;
 	}
 
-	this.goUp = function() {
+	goUp = function() {
 		this.stopAll();
 		this.movingUp = true;
 		//this.currentSpriteSheet = this.upSpriteSheet;
 		//this.currImage = 0;
 	}
 
-	this.goDown = function() {
+	goDown = function() {
 		this.stopAll();
 		this.movingDown = true;
 		//this.currentSpriteSheet = this.downSpriteSheet;
 		//this.currImage = 0;
 	}
 
-	this.stopAll = function() {
+	stopAll = function() {
 		this.movingUp = false;
 		this.movingDown = false;
 		this.movingLeft = false;
 		this.movingRight = false;
 	}
 
-	this.move = function() {
+	move = function() {
 		if(this.movingUp) {
 			this.y -= this.speed;
+			//add sprite sheet logic to each of these
 		}
-		else if(this.movingDown) {
+		if(this.movingDown) {
 			this.y += this.speed;
 		}
-		else if(this.movingLeft) {
+		if(this.movingLeft) {
 			this.x -= this.speed;
 		}
-		else if(this.movingRight) {
+		if(this.movingRight) {
 			this.x += this.speed;
 		}
-	}
+		//collision detection logic
+		this.collisionAboutToHappen = false;
 
-	this.draw = function() {
+	  	//check each wall for a collision with the thing
+	  	/*for(var p in walls) {
+			if(detectCollision(walls[p], this)) {
+				collisionAboutToHappen = true;
+			}*/
+		for(var currWall = 0; currWall < walls.length; currWall++) {
+			this.collisionAboutToHappen = detectCollision(this, walls[currWall]);
+			if (this.collisionAboutToHappen)
+				alert("collision detected");
+		}
+
+		//if necessary, undo the motion
+		if(this.collisionAboutToHappen) {
+			if(this.moveRight) this.x -= this.speed;
+			if(this.moveLeft) this.x += this.speed;
+			if(this.moveDown) this.y -= this.speed;
+			if(this.moveUp) this.y += this.speed;
+	  	}
+
+	  }
+	
+
+	draw = function() {
     /*
 		var ssX = 0, ssY = 0;
 
@@ -145,7 +200,52 @@ function Raccoon() {
     */
 
     ctx.drawImage(raccoonImg, this.x, this.y);
+
+	}
+  
+}
+
+class InteractableObject {
+
+	constructor(type, x, y, width, height) {
+
+		this.type = type;
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
+
+	}
+
+    
+
+	draw = function() {
+		if (type == "test") {
+			ctx.fillStyle = "blue";
+			ctx.fillRect(this.x, this.y, this.width, this.height);
+		}
+	}
   }
 
+//var testThing = new InteractableObject("test", 40, 40, 100, 100);
 
+var walls = [];
+//walls.push(testThing);
+
+var raccoonImg = new Image();
+raccoonImg.src = "images/raccoonV1.png";
+var raccoon = new Raccoon();
+
+raccoonImg.onload = function () {
+	setInterval(animate, 50);
+}
+  
+  
+  
+function animate () {
+	clearBackground();
+	raccoon.move();
+	raccoon.draw();
+  
+	//testThing.draw();
 }
