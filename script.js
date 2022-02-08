@@ -1,29 +1,8 @@
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d");
 
-/*var testThing = new InteractableObject("test", 40, 40, 100, 100);
-
-var walls = [];
-walls.push(testThing);
-
 var raccoonImg = new Image();
 raccoonImg.src = "images/raccoonV1.png";
-var raccoon = new Raccoon();
-
-
-raccoonImg.onload = function () {
-  setInterval(animate, 50);
-}
-
-
-
-function animate () {
-  clearBackground();
-  raccoon.move();
-  raccoon.draw();
-
-  testThing.draw();
-}*/
 
 
 function clearBackground() {
@@ -69,27 +48,22 @@ function handleKeyUp(event) {
 }
 
 function detectCollision(obj1, obj2) {
-	var a = obj1.x < obj2.x + obj2.width;
-	var b = obj1.x + obj1.width > obj2.x;
-	var c = obj1.y < obj2.y + obj2.height;
-	var d = obj1.y + obj1.height > obj2.y;
 
-	console.log(`X ${a} ${b} ${c} ${d}`);
-
-	/*return (	obj1.x < obj2.x + obj2.width &&
+	return ( obj1.x < obj2.x + obj2.width &&
 				obj1.x + obj1.width > obj2.x &&
 			  obj1.y < obj2.y + obj2.height &&
-			  obj1.y + obj1.height > obj2.y );*/
-	
-	if (raccoon.movingDown) { alert("test: " + a + b + c + d); alert (obj1.x + obj1.width); alert(obj1.x);alert(obj1.y);}
-		
-}
+			  obj1.y + obj1.height > obj2.y );
+			  
+	}
 
 class Raccoon {
 
 	constructor() {
 		this.x = 200;
 		this.y = 200;
+
+		this.width = 100;
+		this.height = 100;
 
 		this.speed = 5;
 
@@ -99,8 +73,6 @@ class Raccoon {
 		this.movingDown = false;
 	}
 	
-	
-
 	goLeft() {
 		this.stopAll();
 		this.movingLeft = true;
@@ -158,22 +130,21 @@ class Raccoon {
 			if(detectCollision(walls[p], this)) {
 				collisionAboutToHappen = true;
 			}*/
+		
 		for(var currWall = 0; currWall < walls.length; currWall++) {
 			this.collisionAboutToHappen = detectCollision(this, walls[currWall]);
-			if (this.collisionAboutToHappen)
-				alert("collision detected");
+			if(this.collisionAboutToHappen) break;
 		}
 
 		//if necessary, undo the motion
 		if(this.collisionAboutToHappen) {
-			if(this.moveRight) this.x -= this.speed;
-			if(this.moveLeft) this.x += this.speed;
-			if(this.moveDown) this.y -= this.speed;
-			if(this.moveUp) this.y += this.speed;
+			if(this.movingRight) this.x -= this.speed;
+			if(this.movingLeft) this.x += this.speed;
+			if(this.movingDown) this.y -= this.speed;
+			if(this.movingUp) this.y += this.speed;
 	  	}
 
 	  }
-	
 
 	draw = function() {
     /*
@@ -202,14 +173,12 @@ class Raccoon {
     ctx.drawImage(raccoonImg, this.x, this.y);
 
 	}
-  
 }
 
 class InteractableObject {
 
-	constructor(type, x, y, width, height) {
+	constructor(x, y, width, height) {
 
-		this.type = type;
 		this.x = x;
 		this.y = y;
 		this.width = width;
@@ -217,23 +186,51 @@ class InteractableObject {
 
 	}
 
-    
-
 	draw = function() {
-		if (type == "test") {
+
 			ctx.fillStyle = "blue";
 			ctx.fillRect(this.x, this.y, this.width, this.height);
-		}
+		
 	}
   }
 
-//var testThing = new InteractableObject("test", 40, 40, 100, 100);
+  class Wall extends InteractableObject {
+
+	constructor(x, y, width, height) {
+
+		super(x, y, width, height);	
+
+	}
+
+	draw = function() {
+
+		ctx.fillStyle = "blue";
+		ctx.fillRect(this.x, this.y, this.width, this.height);
+	
+	}
+
+  }
+
+  class Appliance extends InteractableObject {
+
+		constructor() {
+
+		}
+
+  }
+
+
+var leftBoundary = new Wall(0, 0, 10, canvas.height/2);
+var topBoundary = new Wall(0, 0, canvas.width/2, 10);
+var rightBoundary = new Wall(canvas.width/2 - 10, 0, 10, canvas.height/2);
+var bottomBoundary = new Wall(0, canvas.height/2 - 10, canvas.width/2, 10);
+
+var fdnaskdnflasdk = new Wall(400, 400, 50, 50);
 
 var walls = [];
-//walls.push(testThing);
+walls.push(leftBoundary, rightBoundary, topBoundary, bottomBoundary); //perimeter
 
-var raccoonImg = new Image();
-raccoonImg.src = "images/raccoonV1.png";
+
 var raccoon = new Raccoon();
 
 raccoonImg.onload = function () {
@@ -241,11 +238,13 @@ raccoonImg.onload = function () {
 }
   
   
-  
 function animate () {
+
 	clearBackground();
 	raccoon.move();
 	raccoon.draw();
-  
-	//testThing.draw();
+
+	for (var w in walls)
+		walls[w].draw();
+
 }
