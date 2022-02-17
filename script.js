@@ -6,6 +6,9 @@ raccoonImg.src = "images/raccoonV1.png";
 
 var refrigeratorImg = new Image();
 refrigeratorImg.src = "images/tempRefrigerator.jpg";
+
+var tomatoImg = new Image();
+tomatoImg.src = "images/tempTomato.jpg";
 //var refrigeratorMenuBackground = new Image();
 //refrigeratorMenuBackground.src = 
 
@@ -76,6 +79,28 @@ function detectCollision(obj1, obj2) {
 			  obj1.y + obj1.height > obj2.y );
 
 	}
+
+class Ingredient {
+	constructor (name, img, num) {
+		this.name = name;
+		this.img = img;
+		this.num = num;
+	}
+
+	changeNum = function (quantity) {
+		this.num += quantity;
+	}
+}
+
+var wheat = new Ingredient("wheat", tomatoImg, 0);
+var dough = new Ingredient("dough", tomatoImg, 0);
+var tomato = new Ingredient("tomato", tomatoImg, 0);
+var sauce = new Ingredient("sauce", tomatoImg, 0);
+var milk = new Ingredient("milk", tomatoImg, 0);
+var cheese = new Ingredient("cheese", tomatoImg, 0);
+
+var ingredients = [];
+ingredients.push(wheat, dough, tomato, sauce, milk, cheese);
 
 class Raccoon {
 
@@ -215,53 +240,77 @@ class Wall {
 	}
   }
 
-  class Appliance  {
-		constructor(x, y, width, height) {
+//   class Appliance  {
+// 		constructor(x, y, width, height) {
+
+// 			this.x = x;
+// 			this.y = y;
+// 			this.width = width;
+// 			this.height = height;
+
+// 		}
+
+		// draw = function () {
+
+		// 	ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+
+		// }
+
+//   }
+  class Refrigerator {
+	  constructor(x, y, width, height) {
 
 			this.x = x;
 			this.y = y;
 			this.width = width;
 			this.height = height;
-
-		}
-
-		draw = function () {
-
-			ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-
-		}
-
-		drawMenu = function () {
-			
-		}
-  }
-  class Refrigerator extends Appliance {
-	  constructor(img, x, y, width, height) {
-
-			super(img, x, y, width, height);
 			this.name = refrigerator;
-			this.img = refrigeratorImg;
 
 			this.menuOpen = false;
-
+			
 	  }
 
-	  drawMenu = function() {
+	  draw = function () {
 
+		ctx.drawImage(refrigeratorImg, this.x, this.y, this.width, this.height);
+
+	}
+
+	  drawMenu = function() {
 		  if(this.menuOpen) {
-			  //ctx.drawImage(refrigeratorMenuBackground, 100, 100, 500, 500);
+			//ctx.drawImage(refrigeratorMenuBackground, 100, 100, 500, 500);
 			ctx.fillStyle = "grey";
 			ctx.fillRect(300, 50, 400, 400);
+
+			this.numColumns = 4;
+			this.imgSpacingX = 100;
+			this.imgSpacingY = 100;
+			this.currImg = 0;
+			this.currRow = 0;
+			for(var pos = 0; pos < ingredients.length; pos++) {
+				ctx.drawImage(ingredients[pos].img, 310 + (this.imgSpacingX*this.currImg), 60 + (this.imgSpacingY*this.currRow), 50, 50);
+
+				ctx.fillStyle = "white";
+				ctx.font = '12px serif';
+				ctx.textAlign = "center";
+				ctx.fillText(ingredients[pos].name, 310 + (this.imgSpacingX*this.currImg) + 25, 60 + (this.imgSpacingY*this.currRow) + 60);
+				ctx.fillText(ingredients[pos].num, 310 + (this.imgSpacingX*this.currImg) + 25, 60 + (this.imgSpacingY*this.currRow) + 75);
+
+				this.currImg++;
+				if(this.currImg == this.numColumns) {
+					this.currImg = 0;
+					this.currRow++;
+				}					
+			}	
 		  }
 	  }
 	  
 	  click = function () {
-
 		  if(this.menuOpen) { this.menuOpen = false; }
 		  else { this.menuOpen = true; }
-
 	  }
   }
+
 
 //walls
 var leftBound = new Wall(0, 0, 10, canvas.height);
@@ -272,19 +321,17 @@ var centerTopBound = new Wall(canvas.width/2 - 5, 0, 10, canvas.height/2);
 
 //appliances
 var refrigerator = new Refrigerator(100, 20, 80, 180);
-var testRefrigerator = new Refrigerator(200, 20, 80, 180);
-
 
 var walls = [];
 walls.push(leftBound, rightBound, topBound, bottomBound); //perimeter
 walls.push(centerTopBound); //interior walls
-walls.push(refrigerator, testRefrigerator); //interior objects
+walls.push(refrigerator); //interior objects
 
 var clickables = [];
-clickables.push(refrigerator, testRefrigerator);
+clickables.push(refrigerator);
 
 var menus = [];
-menus.push(refrigerator, testRefrigerator);
+menus.push(refrigerator);
 
 
 var raccoon = new Raccoon();
