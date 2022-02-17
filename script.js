@@ -4,6 +4,11 @@ var ctx = canvas.getContext("2d");
 var raccoonImg = new Image();
 raccoonImg.src = "images/raccoonV1.png";
 
+var refrigeratorImg = new Image();
+refrigeratorImg.src = "images/tempRefrigerator.jpg";
+//var refrigeratorMenuBackground = new Image();
+//refrigeratorMenuBackground.src = 
+
 
 function clearBackground() {
   ctx.fillStyle = "white";
@@ -47,13 +52,29 @@ function handleKeyUp(event) {
   }
 }
 
+document.addEventListener("click", handleClick, true);
+
+function handleClick(event) {
+	this.clickX = event.pageX;
+	this.clickY = event.pageY;
+
+	for(var pos = 0; pos < clickables.length; pos++) {
+		if( this.clickX < clickables[pos].x + clickables[pos].width &&
+			this.clickX > clickables[pos].x &&
+			this.clickY < clickables[pos].y + clickables[pos].height &&
+			this.clickY > clickables[pos].y) {
+				clickables[pos].click();
+		} 
+	}			
+}
+
 function detectCollision(obj1, obj2) {
 
 	return ( obj1.x < obj2.x + obj2.width &&
 				obj1.x + obj1.width > obj2.x &&
 			  obj1.y < obj2.y + obj2.height &&
 			  obj1.y + obj1.height > obj2.y );
-			  
+
 	}
 
 class Raccoon {
@@ -73,7 +94,7 @@ class Raccoon {
 		this.movingDown = false;
 	}
 	
-	goLeft() {
+	goLeft = function() {
 		this.stopAll();
 		this.movingLeft = true;
 		//this.currentSpriteSheet = this.leftSpriteSheet;
@@ -175,8 +196,7 @@ class Raccoon {
 	}
 }
 
-class InteractableObject {
-
+class Wall {
 	constructor(x, y, width, height) {
 
 		this.x = x;
@@ -186,49 +206,85 @@ class InteractableObject {
 
 	}
 
-	draw = function() {
-
-			ctx.fillStyle = "blue";
-			ctx.fillRect(this.x, this.y, this.width, this.height);
-		
-	}
-  }
-
-  class Wall extends InteractableObject {
-
-	constructor(x, y, width, height) {
-
-		super(x, y, width, height);	
-
-	}
-
+	//will not call this function in final product, only present for developing
 	draw = function() {
 
 		ctx.fillStyle = "blue";
 		ctx.fillRect(this.x, this.y, this.width, this.height);
-	
+		
 	}
-
   }
 
-  class Appliance extends InteractableObject {
+  class Appliance  {
+		constructor(x, y, width, height) {
 
-		constructor() {
+			this.x = x;
+			this.y = y;
+			this.width = width;
+			this.height = height;
 
 		}
 
+		draw = function () {
+
+			ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+
+		}
+
+		drawMenu = function () {
+			
+		}
+  }
+  class Refrigerator extends Appliance {
+	  constructor(img, x, y, width, height) {
+
+			super(img, x, y, width, height);
+			this.name = refrigerator;
+			this.img = refrigeratorImg;
+
+			this.menuOpen = false;
+
+	  }
+
+	  drawMenu = function() {
+
+		  if(this.menuOpen) {
+			  //ctx.drawImage(refrigeratorMenuBackground, 100, 100, 500, 500);
+			ctx.fillStyle = "grey";
+			ctx.fillRect(300, 50, 400, 400);
+		  }
+	  }
+	  
+	  click = function () {
+
+		  if(this.menuOpen) { this.menuOpen = false; }
+		  else { this.menuOpen = true; }
+
+	  }
   }
 
+//walls
+var leftBound = new Wall(0, 0, 10, canvas.height);
+var topBound = new Wall(0, 0, canvas.width, 10);
+var rightBound = new Wall(canvas.width - 10, 0, 10, canvas.height);
+var bottomBound = new Wall(0, canvas.height - 10, canvas.width, 10);
+var centerTopBound = new Wall(canvas.width/2 - 5, 0, 10, canvas.height/2);
 
-var leftBoundary = new Wall(0, 0, 10, canvas.height/2);
-var topBoundary = new Wall(0, 0, canvas.width/2, 10);
-var rightBoundary = new Wall(canvas.width/2 - 10, 0, 10, canvas.height/2);
-var bottomBoundary = new Wall(0, canvas.height/2 - 10, canvas.width/2, 10);
+//appliances
+var refrigerator = new Refrigerator(100, 20, 80, 180);
+var testRefrigerator = new Refrigerator(200, 20, 80, 180);
 
-var fdnaskdnflasdk = new Wall(400, 400, 50, 50);
 
 var walls = [];
-walls.push(leftBoundary, rightBoundary, topBoundary, bottomBoundary); //perimeter
+walls.push(leftBound, rightBound, topBound, bottomBound); //perimeter
+walls.push(centerTopBound); //interior walls
+walls.push(refrigerator, testRefrigerator); //interior objects
+
+var clickables = [];
+clickables.push(refrigerator, testRefrigerator);
+
+var menus = [];
+menus.push(refrigerator, testRefrigerator);
 
 
 var raccoon = new Raccoon();
@@ -246,5 +302,8 @@ function animate () {
 
 	for (var w in walls)
 		walls[w].draw();
+
+	for(var m in menus)
+		menus[m].drawMenu();
 
 }
