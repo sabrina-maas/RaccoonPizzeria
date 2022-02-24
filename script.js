@@ -211,6 +211,8 @@ class Cow {
 
 		this.canMilk = true;
 		this.milkCooldown = 60000;
+
+		//super important edits
 	}
 
 	move = function() {
