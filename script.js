@@ -40,7 +40,6 @@ function clearBackground() {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
-
 document.addEventListener("keydown", handleKeyDown, true);
 function handleKeyDown(event) {
   if(event.key == 'w') {
@@ -80,12 +79,7 @@ function handleKeyUp(event) {
   else if(event.key == 'd') {
 	raccoon.movingRight = false;
   }
-
-  if(pizzaOven.menuOpen) {
-	  pizzaOven.pizzaNum(event.key);
-  }
 }
-
 
 document.addEventListener("click", handleClick, true);
 function handleClick(event) {
@@ -104,13 +98,12 @@ function handleClick(event) {
 
 
 function detectCollision(obj1, obj2) {
-
 	return ( obj1.x < obj2.x + obj2.width &&
 				obj1.x + obj1.width > obj2.x &&
 			  obj1.y < obj2.y + obj2.height &&
 			  obj1.y + obj1.height > obj2.y );
 
-	}
+}
 
 class Ingredient {
 	constructor (name, img, num) {
@@ -135,7 +128,7 @@ var ingredients = [wheat, dough, tomato, sauce, milk, cheese];
 var pizzaIngredients = [dough, sauce, cheese];
 
 class Plant {
-	constructor(name, img0, img1, canHarvest, num) {
+	constructor(name, img0, img1, canHarvest, num, harvestNum) {
 		this.name = name;
 		this.img0 = img0;
 		this.img1 = img1;
@@ -145,20 +138,20 @@ class Plant {
 		this.height = 50;
 		this.canHarvest = canHarvest;
 		this.num = num;
+		this.harvestNum = harvestNum;
 	}
 
 	click = function() {
 		if(this.canHarvest) {
 			for(var pos = 0; pos < ingredients.length; pos++) {
 				if(ingredients[pos].name == this.name) {
-					ingredients[pos].changeNum(1);
-					alert("one " + ingredients[pos].name + " added to refrigerator");
+					ingredients[pos].changeNum(this.harvestNum);
+					alert(ingredients[pos].name + " added to refrigerator");
 				}
 			}
 			this.canHarvest = false;
 		}
 		else {
-			//display message
 			alert("nothing to harvest");
 		}
 	}
@@ -211,14 +204,9 @@ class Cow {
 
 		this.canMilk = true;
 		this.milkCooldown = 60000;
-
-		//super important edits
 	}
 
 	move = function() {
-		// ctx.beginPath();
-		// ctx.stroke();
-
 		this.x += this.vx;
 		if (this.x + this.width >= pasture.x + pasture.width || this.x <= pasture.x) {
 			this.vx = -this.vx;
@@ -234,7 +222,6 @@ class Cow {
 		this.y += this.vy;
 		if (this.y + this.height >= pasture.y + pasture.height || this.y <= pasture.y) {
 		  this.vy = -this.vy;
-	
 		}
 	}
 
@@ -415,27 +402,25 @@ class Wall {
 		ctx.fillRect(this.x, this.y, this.width, this.height);
 		
 	}
-  }
+}
 
-  class Refrigerator {
-	  constructor() {
-			this.name = "refrigerator";
-			this.x = 100;
-			this.y = 20;
-			this.width = 80;
-			this.height = 180;
+class Refrigerator {
+	constructor() {
+		this.name = "refrigerator";
+		this.x = 100;
+		this.y = 20;
+		this.width = 80;
+		this.height = 180;
 			
-			this.menuOpen = false;
-	  }
-
-	  draw = function () {
-
-		ctx.drawImage(refrigeratorImg, this.x, this.y, this.width, this.height);
-
+		this.menuOpen = false;
 	}
 
-	  drawMenu = function() {
-		  if(this.menuOpen) {
+	draw = function () {
+		ctx.drawImage(refrigeratorImg, this.x, this.y, this.width, this.height);
+	}
+
+	drawMenu = function() {
+		if(this.menuOpen) {
 			//ctx.drawImage(refrigeratorMenuBackground, 100, 100, 500, 500);
 			ctx.fillStyle = "grey";
 			ctx.fillRect(300, 50, 400, 400);
@@ -460,14 +445,14 @@ class Wall {
 					this.currRow++;
 				}					
 			}	
-		  }
-	  }
+		}
+	}
 	  
-	  click = function () {
-		  if(this.menuOpen) { this.menuOpen = false; }
-		  else { this.menuOpen = true; }
-	  }
-  }
+	click = function () {
+		if(this.menuOpen) { this.menuOpen = false; }
+		else { this.menuOpen = true; }
+	}
+}
   
 class Appliance {
 	constructor(name, img0, img1, x, y, width, height, ingredient, product) {
@@ -511,13 +496,32 @@ class Appliance {
 			else {
 				alert("not enough " + this.ingredient.name + " :(");
 			}
-		} else if(this.state == 2) {
+		}
+		else if(this.state == 2) {
 			this.state = 0;
 			this.product.changeNum(1);
 			alert("one " + this.product.name + " added to refrigerator");
 		}
 	}
 }
+
+class Pizza {
+	constructor(name, img, value) {
+		this.name = name;
+		this.img = img;
+		this.value = value;
+
+		this.canMake = false;
+		
+		this.ingredients = [];
+		if(this.name = "cheese pizza") {
+			this.ingredients.push(dough, sauce, cheese);
+		}
+	}
+}
+
+var cheesePizza = new Pizza("cheese pizza", cheesePizzaImg, 7);
+var pizzas = [cheesePizza];
 
 class PizzaOven {
 	constructor() {
@@ -535,36 +539,67 @@ class PizzaOven {
 		if(this.state == 0) {
 			ctx.drawImage(pizzaOvenImg0, this.x, this.y, this.width, this.height);
 		}
-
 	}
 
 	drawMenu = function() {
-		for(var pos = 0; pos < pizzas.length; pos++) pizzas[pos].go();
-
 		if(this.menuOpen) {
 			ctx.fillStyle = "grey";
 			ctx.fillRect(200, 50, 600, 400);
 
-			this.numColumns = 2;
-			this.imgSpacingX = 80;
-			this.imgSpacingY = 80;
-			this.currImg = 0;
-			this.currRow = 0;
+			//pizza ingredients display
+			this.numIngredientColumns = 2;
+			this.ingredientSpacingX = 80;
+			this.ingredientSpacingY = 80;
+			this.currIngredient = 0;
+			this.currIngredientRow = 0;
 			for(var pos = 0; pos < pizzaIngredients.length; pos++) {
-				ctx.drawImage(pizzaIngredients[pos].img, 210 + (this.imgSpacingX*this.currImg), 60 + (this.imgSpacingY*this.currRow), 50, 50);
+				ctx.drawImage(pizzaIngredients[pos].img, 210 + (this.ingredientSpacingX*this.currIngredient), 60 + (this.ingredientSpacingY*this.currIngredientRow), 50, 50);
 
 				ctx.fillStyle = "white";
 				ctx.font = '12px serif';
 				ctx.textAlign = "center";
-				ctx.fillText(pizzaIngredients[pos].name, 210 + (this.imgSpacingX*this.currImg) + 25, 60 + (this.imgSpacingY*this.currRow) + 60);
-				ctx.fillText(pizzaIngredients[pos].num, 210 + (this.imgSpacingX*this.currImg) + 25, 60 + (this.imgSpacingY*this.currRow) + 75);
+				ctx.fillText(pizzaIngredients[pos].name, 210 + (this.ingredientSpacingX*this.currIngredient) + 25, 60 + (this.ingredientSpacingY*this.currIngredientRow) + 60);
+				ctx.fillText(pizzaIngredients[pos].num, 210 + (this.ingredientSpacingX*this.currIngredient) + 25, 60 + (this.ingredientSpacingY*this.currIngredientRow) + 75);
 
-				this.currImg++;
-				if(this.currImg == this.numColumns) {
-					this.currImg = 0;
-					this.currRow++;
+				this.currIngredient++;
+
+				if(this.currIngredient == this.numIngredientColumns) {
+					this.currIngredient = 0;
+					this.currIngredientRow++;
 				}					
-			}				
+			}
+			
+			//determine which pizzas can be made			
+			for(var ppos = 0; ppos < pizzas.length; ppos++) {
+				this.checkIngredients(pizzas[ppos]);				
+			}
+
+			//display the pizzas
+			this.possPizzas = 0;
+			this.pizzaSpacingX = 80;
+			this.pizzaSpacingY = 80;
+			this.currPizza = 0;
+			this.currPizzaRow = 0;
+			for(var pos = 0; pos < pizzas.length; pos++) {
+				if(pizzas[pos].canMake) {
+					this.possPizzas++;
+					ctx.drawImage(pizzas[pos].img, 710 + (this.pizzaSpacingX*this.currPizza), 60 + (this.pizzaSpacingY*this.currPizzaRow), 50, 50);
+
+					ctx.fillStyle = "white";
+					ctx.font = '12px serif';
+					ctx.textAlign = "center";
+					ctx.fillText(pizzas[pos].name, 710 + (this.pizzaSpacingX*this.currPizza) + 25, 60 + (this.pizzaSpacingY*this.currPizzaRow) + 60);
+				}
+				this.currPizza++;					
+			}
+
+			//display message if no pizzas possible
+			if(this.possPizzas == 0) {
+				ctx.fillStyle = "white";
+				ctx.font = '18px serif';
+				ctx.textAlign = "center";
+				ctx.fillText("no pizzas possible", 710, 100);
+			}		
 		}
 	}
 
@@ -573,36 +608,19 @@ class PizzaOven {
 		//if(this.state == 2)
 	}
 
-	pizzaNum = function(keyInput) {
-		
-	}
-}
+	checkIngredients = function(pizza) {
+		var currPizzaIngredients = pizza.ingredients;
+		for(var ipos = 0; ipos < currPizzaIngredients.length; ipos++) {
+			if(ipos == currPizzaIngredients.length - 1 && currPizzaIngredients[ipos].num > 0) 
+				pizza.canMake = true;
 
-class Pizza {
-	constructor(name, image, value) {
-		this.name = name;
-		this.image = image;
-		this.value = value;
-
-		this.canMake = false;
-		
-		this.ingredients = [];
-		if(this.name = "cheese pizza") {
-			this.ingredients.push(dough, sauce, cheese);
+			if(currPizzaIngredients[ipos].num < 1) {
+				pizza.canMake = false;
+				return;						
+			}
 		}
 	}
-
-	go = function() {
-		for (var pos = 0; pos < this.ingredients.length; pos++) {
-			if(ingredients[pos].num < 1)
-				this.canMake = false;
-		}
-	}
-
 }
-
-var cheesePizza = new Pizza("cheese pizza", cheesePizzaImg, 7);
-var pizzas = [cheesePizza];
 
 //walls
 var leftBound = new Wall(0, 0, 10, canvas.height);
@@ -615,7 +633,7 @@ var centerTopBound = new Wall(canvas.width/2 - 5, 0, 10, canvas.height/2);
 var pasture = new Pasture();
 var garden = new Garden();
 //var wheatPlant = new Plant("wheat", wheatImg, 0, 0, true, 1);
-var tomatoPlant = new Plant("tomato", tomatoPlantImg0, tomatoPlantImg1, true, 1);
+var tomatoPlant = new Plant("tomato", tomatoPlantImg0, tomatoPlantImg1, true, 1, 3);
   //add all other possible plants, set num to zero
 
 
