@@ -42,43 +42,67 @@ function clearBackground() {
 
 document.addEventListener("keydown", handleKeyDown, true);
 function handleKeyDown(event) {
-  if(event.key == 'w') {
-	if(!raccoon.movingUp)
-		raccoon.goUp();
-  }
-  else if(event.key == 's') {
-	if(!raccoon.movingDown)
-		raccoon.goDown();
-  }
-  else if(event.key == 'a') {
-	if(!raccoon.movingLeft)
-		raccoon.goLeft();
-  }
-  else if(event.key == 'd') {
-	if(!raccoon.movingRight)
-		raccoon.goRight();
-  }
+	if(event.key == 'w') {
+		if(!raccoon.movingUp)
+			raccoon.goUp();
+  	}
+  	else if(event.key == 's') {
+		if(!raccoon.movingDown)
+			raccoon.goDown();
+ 	}
+ 	else if(event.key == 'a') {
+		if(!raccoon.movingLeft)
+			raccoon.goLeft();
+  	}
+ 	else if(event.key == 'd') {
+		if(!raccoon.movingRight)
+			raccoon.goRight();
+	 }
 
-  else if(event.key == 'Escape') {
-	for(var m in menus)
-		menus[m].menuOpen = false;
-  }
+  	else if(event.key == 'Escape') {
+		for(var m in menus)
+			menus[m].menuOpen = false;
+	}
+
+	if(pizzaOven.menuOpen) {
+		if(event.key == '1')
+			pizzaOven.select(pizzas[0]);  
+		if(event.key == '2')
+			pizzaOven.select(pizzas[1]);
+		if(event.key == '3')
+			pizzaOven.select(pizzas[2]);
+		if(event.key == '4')
+			pizzaOven.select(pizzas[3]);
+		if(event.key == '5')
+			pizzaOven.select(pizzas[4]);
+		if(event.key == '6')
+			pizzaOven.select(pizzas[5]);
+		if(event.key == '7')
+			pizzaOven.select(pizzas[6]);
+		if(event.key == '8')
+			pizzaOven.select(pizzas[7]);
+		if(event.key == '9')
+			pizzaOven.select(pizzas[8]);
+		
+		if(event.key == 'Enter')
+			pizzaOven.bake();
+ 	}
 }
 
 document.addEventListener("keyup", handleKeyUp, true);
 function handleKeyUp(event) {
-  if(event.key == 'w') {
-	raccoon.movingUp = false;
-  }
-  else if(event.key == 's') {
-	raccoon.movingDown = false;
-  }
-  else if(event.key == 'a') {
-	raccoon.movingLeft = false;
-  }
-  else if(event.key == 'd') {
-	raccoon.movingRight = false;
-  }
+	if(event.key == 'w') {
+		raccoon.movingUp = false;
+  	}
+  	else if(event.key == 's') {
+		raccoon.movingDown = false;
+  	}
+  	else if(event.key == 'a') {
+		raccoon.movingLeft = false;
+  	}
+  	else if(event.key == 'd') {
+		raccoon.movingRight = false;
+  	}
 }
 
 document.addEventListener("click", handleClick, true);
@@ -118,11 +142,11 @@ class Ingredient {
 }
 
 var wheat = new Ingredient("wheat", tomatoImg, 0);
-var dough = new Ingredient("dough", tomatoImg, 0);
+var dough = new Ingredient("dough", tomatoImg, 1);
 var tomato = new Ingredient("tomato", tomatoImg, 0);
-var sauce = new Ingredient("sauce", tomatoImg, 0);
+var sauce = new Ingredient("sauce", tomatoImg, 1);
 var milk = new Ingredient("milk", tomatoImg, 0);
-var cheese = new Ingredient("cheese", tomatoImg, 0); //replace images with the correct ones later
+var cheese = new Ingredient("cheese", tomatoImg, 1); //replace images with the correct ones later
 
 var ingredients = [wheat, dough, tomato, sauce, milk, cheese];
 var pizzaIngredients = [dough, sauce, cheese];
@@ -532,12 +556,18 @@ class PizzaOven {
 		this.state = 0;
 		this.menuOpen = false;
 
-		this.selectedPizza = -1;
+		this.selectedPizza = 0;
 	}
 
 	draw = function() {
-		if(this.state == 0) {
+		if(this.state == 0)
 			ctx.drawImage(pizzaOvenImg0, this.x, this.y, this.width, this.height);
+		else if(this.state == 1)
+			ctx.drawImage(pizzaOvenImg1, this.x, this.y, this.width, this.height);
+		else if(this.state == 2) {
+			ctx.drawImage(pizzaOvenImg0, this.x, this.y, this.width, this.height);
+			ctx.fillStyle = "blue";
+			ctx.fillRect(this.x, this.y, 10, 10);
 		}
 	}
 
@@ -580,15 +610,20 @@ class PizzaOven {
 			this.pizzaSpacingY = 80;
 			this.currPizza = 0;
 			this.currPizzaRow = 0;
+			this.numPizzaColumns = 2;
 			for(var pos = 0; pos < pizzas.length; pos++) {
 				if(pizzas[pos].canMake) {
 					this.possPizzas++;
-					ctx.drawImage(pizzas[pos].img, 710 + (this.pizzaSpacingX*this.currPizza), 60 + (this.pizzaSpacingY*this.currPizzaRow), 50, 50);
+					ctx.drawImage(pizzas[pos].img, 650 + (this.pizzaSpacingX*this.currPizza), 60 + (this.pizzaSpacingY*this.currPizzaRow), 50, 50);
 
 					ctx.fillStyle = "white";
 					ctx.font = '12px serif';
 					ctx.textAlign = "center";
-					ctx.fillText(pizzas[pos].name, 710 + (this.pizzaSpacingX*this.currPizza) + 25, 60 + (this.pizzaSpacingY*this.currPizzaRow) + 60);
+					ctx.fillText(pizzas[pos].name, 650 + (this.pizzaSpacingX*this.currPizza) + 25, 60 + (this.pizzaSpacingY*this.currPizzaRow) + 60);
+				}
+				if(this.currPizza == this.numpizzaColumns - 1) {
+					this.currPizza = 0;
+					this.currPizzaRow++;
 				}
 				this.currPizza++;					
 			}
@@ -599,13 +634,38 @@ class PizzaOven {
 				ctx.font = '18px serif';
 				ctx.textAlign = "center";
 				ctx.fillText("no pizzas possible", 710, 100);
-			}		
+			}
+			
+			//display selected pizza
+			if(this.selectedPizza != 0) {
+				ctx.drawImage(this.selectedPizza.img, 400, 150, 200, 200);
+				ctx.fillStyle = "white";
+				ctx.font = '18px serif';
+				ctx.textAlign = "center";
+				ctx.fillText(this.selectedPizza.name + " selected", 500, 400);
+				ctx.fillText("press enter to bake", 500, 120);
+			}
+
+			//display message if no pizza selected
+			if(this.selectedPizza == 0) {
+				ctx.fillStyle = "black";
+				ctx.fillRect(400, 150, 200, 200);
+				ctx.fillStyle = "white";
+				ctx.font = '18px serif';
+				ctx.textAlign = "center";
+				ctx.fillText("no pizza selected", 500, 200);
+			}
 		}
 	}
 
 	click = function() {
 		if(this.state == 0) this.menuOpen = true;
-		//if(this.state == 2)
+		if(this.state == 2) {
+			alert("one " + this.selectedPizza.name + " baked");
+			pizzasBaked.push(this.selectedPizza);
+			this.state = 0;
+			this.checkIngredients(this.selectedPizza);
+		}
 	}
 
 	checkIngredients = function(pizza) {
@@ -616,9 +676,58 @@ class PizzaOven {
 
 			if(currPizzaIngredients[ipos].num < 1) {
 				pizza.canMake = false;
+				if(pizza == this.selectedPizza) this.selectedPizza = 0;
 				return;						
 			}
 		}
+	}
+
+	select = function(pizza) {
+		if(pizza.canMake) {
+			this.selectedPizza = pizza;
+		}
+	}
+
+	bake = function() {
+		if(this.selectedPizza.canMake) {
+			for(var pos = 0; pos < this.selectedPizza.ingredients.length; pos++) {
+				this.selectedPizza.ingredients[pos].changeNum(-1);
+			}
+			this.state = 1;
+			var self = this;
+			this.timer = setTimeout(function() { 
+				self.state = 2;
+			}, 8000);
+			this.menuOpen = false;
+		}
+		else {
+			this.selectedPizza = 0;
+		}
+	}
+}
+
+var pizzasBaked = [];
+
+class Shop {
+	constructor() {
+		this.x = 100;
+		this.y = 600;
+		this.width = 100;
+		this.height = 40;
+
+		this.menuOpen = false;
+	}
+
+	drawMenu = function() {
+		if(this.menuOpen) {
+			ctx.fillStyle = "grey";
+			ctx.fillRect(300, 50, 400, 400);
+		}
+	}
+
+	click = function() {
+		if(this.menuOpen) this.menuOpen = false;
+		else this.menuOpen = false;
 	}
 }
 
@@ -640,7 +749,6 @@ var tomatoPlant = new Plant("tomato", tomatoPlantImg0, tomatoPlantImg1, true, 1,
 var plants = [];
 plants.push(tomatoPlant);
 
-
 //appliances
 var refrigerator = new Refrigerator();
 var pizzaOven = new PizzaOven();
@@ -661,7 +769,6 @@ for (var pos = 0; pos < cows.length; pos++) clickables.push(cows[pos]);
 var menus = [];
 menus.push(refrigerator, pizzaOven);
 
-
 var raccoon = new Raccoon();
 
 raccoonImg.onload = function () {
@@ -670,7 +777,6 @@ raccoonImg.onload = function () {
   
   
 function animate () {
-	
 	clearBackground();
 
 	pasture.draw();
@@ -681,8 +787,6 @@ function animate () {
 
 	for (var w in walls)
 		walls[w].draw();
-
 	for (var m in menus)
 		menus[m].drawMenu();
-
 }
