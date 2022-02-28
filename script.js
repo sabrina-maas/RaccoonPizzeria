@@ -422,7 +422,7 @@ class Wall {
 	//will not call this function in final product, only present for developing
 	draw = function() {
 
-		ctx.fillStyle = "blue";
+		ctx.fillStyle = "black";
 		ctx.fillRect(this.x, this.y, this.width, this.height);
 		
 	}
@@ -582,14 +582,18 @@ class PizzaOven {
 			this.ingredientSpacingY = 80;
 			this.currIngredient = 0;
 			this.currIngredientRow = 0;
+			ctx.fillStyle = "white";
+			ctx.font = '18px serif';
+			ctx.textAlign = "center";
+			ctx.fillText("ingredients", 210 + 50 + 15, 70);
 			for(var pos = 0; pos < pizzaIngredients.length; pos++) {
-				ctx.drawImage(pizzaIngredients[pos].img, 210 + (this.ingredientSpacingX*this.currIngredient), 60 + (this.ingredientSpacingY*this.currIngredientRow), 50, 50);
+				ctx.drawImage(pizzaIngredients[pos].img, 210 + (this.ingredientSpacingX*this.currIngredient), 80 + (this.ingredientSpacingY*this.currIngredientRow), 50, 50);
 
 				ctx.fillStyle = "white";
 				ctx.font = '12px serif';
 				ctx.textAlign = "center";
-				ctx.fillText(pizzaIngredients[pos].name, 210 + (this.ingredientSpacingX*this.currIngredient) + 25, 60 + (this.ingredientSpacingY*this.currIngredientRow) + 60);
-				ctx.fillText(pizzaIngredients[pos].num, 210 + (this.ingredientSpacingX*this.currIngredient) + 25, 60 + (this.ingredientSpacingY*this.currIngredientRow) + 75);
+				ctx.fillText(pizzaIngredients[pos].name, 210 + (this.ingredientSpacingX*this.currIngredient) + 25, 80 + (this.ingredientSpacingY*this.currIngredientRow) + 60);
+				ctx.fillText(pizzaIngredients[pos].num, 210 + (this.ingredientSpacingX*this.currIngredient) + 25, 80 + (this.ingredientSpacingY*this.currIngredientRow) + 75);
 
 				this.currIngredient++;
 
@@ -611,15 +615,23 @@ class PizzaOven {
 			this.currPizza = 0;
 			this.currPizzaRow = 0;
 			this.numPizzaColumns = 2;
+			this.pizzaNum = 1;
+			ctx.fillStyle = "white";
+			ctx.font = '18px serif';
+			ctx.textAlign = "center";
+			ctx.fillText("pizzas", 650 + 50 + 15, 70);
 			for(var pos = 0; pos < pizzas.length; pos++) {
 				if(pizzas[pos].canMake) {
 					this.possPizzas++;
-					ctx.drawImage(pizzas[pos].img, 650 + (this.pizzaSpacingX*this.currPizza), 60 + (this.pizzaSpacingY*this.currPizzaRow), 50, 50);
+					// ctx.drawImage(pizzas[pos].img, 650 + (this.pizzaSpacingX*this.currPizza), 80 + (this.pizzaSpacingY*this.currPizzaRow), 50, 50);
+					ctx.drawImage(pizzas[pos].img, 660 + 80 - (this.pizzaSpacingX*this.currPizza), 80 + (this.pizzaSpacingY*this.currPizzaRow), 50, 50);
+
 
 					ctx.fillStyle = "white";
 					ctx.font = '12px serif';
 					ctx.textAlign = "center";
-					ctx.fillText(pizzas[pos].name, 650 + (this.pizzaSpacingX*this.currPizza) + 25, 60 + (this.pizzaSpacingY*this.currPizzaRow) + 60);
+					ctx.fillText(pizzas[pos].name, 660 + 80 - (this.pizzaSpacingX*this.currPizza) + 25, 80 + (this.pizzaSpacingY*this.currPizzaRow) + 60);
+					ctx.fillText(this.pizzaNum, 660 + 80 - (this.pizzaSpacingX*this.currPizza) + 25, 80 + (this.pizzaSpacingY*this.currPizzaRow) + 75);
 				}
 				if(this.currPizza == this.numpizzaColumns - 1) {
 					this.currPizza = 0;
@@ -638,12 +650,12 @@ class PizzaOven {
 			
 			//display selected pizza
 			if(this.selectedPizza != 0) {
-				ctx.drawImage(this.selectedPizza.img, 400, 150, 200, 200);
+				ctx.drawImage(this.selectedPizza.img, 400, 190, 200, 200);
 				ctx.fillStyle = "white";
 				ctx.font = '18px serif';
 				ctx.textAlign = "center";
-				ctx.fillText(this.selectedPizza.name + " selected", 500, 400);
-				ctx.fillText("press enter to bake", 500, 120);
+				ctx.fillText(this.selectedPizza.name + " selected", 500, 160);
+				ctx.fillText("press enter to bake", 500, 180);
 			}
 
 			//display message if no pizza selected
@@ -728,6 +740,32 @@ class Shop {
 	click = function() {
 		if(this.menuOpen) this.menuOpen = false;
 		else this.menuOpen = false;
+	}
+}
+
+class ArbitraryName {
+	constructor() {
+		this.day = 1;
+		this.objectiveMet = false;
+	}
+	run = function() {
+		this.openMenu();
+		this.checkObjective();
+	}
+	showMenu = function() {
+		if(this.day == 1) {
+
+		}
+		if(this.day == 2) {
+
+		}
+	}
+	checkObjective = function() {
+		if(this.day == 1) {
+			for(var p in pizzasBaked)
+				if(p == cheesePizza)
+					this.objectiveMet = true;
+		}
 	}
 }
 
