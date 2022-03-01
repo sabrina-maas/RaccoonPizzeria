@@ -62,6 +62,7 @@ function handleKeyDown(event) {
   	else if(event.key == 'Escape') {
 		for(var m in menus)
 			menus[m].menuOpen = false;
+			pizzeria.menuOpen = false;
 	}
 
 	if(pizzaOven.menuOpen) {
@@ -188,7 +189,7 @@ class Garden {
 		//add other plants
 	}
 	draw = function() {
-		ctx.fillStyle = "brown";
+		ctx.fillStyle = "#786054";
 		ctx.fillRect(600, 300, 400, 300);
 
 		this.numColumns = 4;
@@ -272,26 +273,30 @@ var cow4 = new Cow(canvas.width / 3, canvas.width / 4);
 
 var cows = [cow1]; //add other cows to cow array as cows purchased in game
 
+var fenceImg = new Image();
+fenceImg.src = "images/fence.png";
+
 class Pasture {
 	constructor() {
-		this.x = 500;
+		this.x = 505;
 		this.y = 10;
-		this.width = 500;
+		this.width = 500 - 15;
 		this.height = 200;
 	}
 	
 	draw = function() {
-		ctx.fillStyle = "green";
+		ctx.fillStyle = "#64906D";
 		ctx.fillRect(this.x, this.y, this.width, this.height);
 
 		for(var pos = 0; pos < cows.length; pos++) {
 			cows[pos].move();
 		}
+		ctx.drawImage(fenceImg, 505, 165, 485/2 - 60, 50);
+		ctx.drawImage(fenceImg, 505 + 485/2 + 60, 165, 485/2 - 60, 50);
 	}
 }
 
 class Raccoon {
-
 	constructor() {
 		this.x = 200;
 		this.y = 200;
@@ -306,35 +311,31 @@ class Raccoon {
 		this.movingUp = false;
 		this.movingDown = false;
 	}
-	
+
 	goLeft = function() {
 		this.stopAll();
 		this.movingLeft = true;
 		//this.currentSpriteSheet = this.leftSpriteSheet;
 		//this.currImage = 0;
 	}
-
 	goRight = function() {
 		this.stopAll();
 		this.movingRight = true;
 		//this.currentSpriteSheet = this.rightSpriteSheet;
 		//this.currImage = 0;
 	}
-
 	goUp = function() {
 		this.stopAll();
 		this.movingUp = true;
 		//this.currentSpriteSheet = this.upSpriteSheet;
 		//this.currImage = 0;
 	}
-
 	goDown = function() {
 		this.stopAll();
 		this.movingDown = true;
 		//this.currentSpriteSheet = this.downSpriteSheet;
 		//this.currImage = 0;
 	}
-
 	stopAll = function() {
 		this.movingUp = false;
 		this.movingDown = false;
@@ -379,7 +380,6 @@ class Raccoon {
 	  	}
 
 	  }
-
 	draw = function() {
     /*
 		var ssX = 0, ssY = 0;
@@ -410,21 +410,22 @@ class Raccoon {
 }
 
 class Wall {
-	constructor(x, y, width, height) {
+	constructor(x, y, width, height, color) {
 
 		this.x = x;
 		this.y = y;
 		this.width = width;
 		this.height = height;
+		this.color = color;
 
 	}
 
 	//will not call this function in final product, only present for developing
 	draw = function() {
-
-		ctx.fillStyle = "black";
-		ctx.fillRect(this.x, this.y, this.width, this.height);
-		
+		if(this.color != "none") {
+			ctx.fillStyle = this.color;
+			ctx.fillRect(this.x, this.y, this.width, this.height);
+		}
 	}
 }
 
@@ -446,7 +447,7 @@ class Refrigerator {
 	drawMenu = function() {
 		if(this.menuOpen) {
 			//ctx.drawImage(refrigeratorMenuBackground, 100, 100, 500, 500);
-			ctx.fillStyle = "grey";
+			ctx.fillStyle = "pink";
 			ctx.fillRect(300, 50, 400, 400);
 
 			this.numColumns = 4;
@@ -549,7 +550,7 @@ var pizzas = [cheesePizza];
 
 class PizzaOven {
 	constructor() {
-		this.x = 350;
+		this.x = 200;
 		this.y = 375;
 		this.width = 100;
 		this.height = 100;
@@ -743,21 +744,60 @@ class Shop {
 	}
 }
 
-class ArbitraryName {
+class Pizzeria {
 	constructor() {
 		this.day = 1;
 		this.objectiveMet = false;
+		this.menuOpen = true;
+	}
+	draw = function() {
+		//kitchen floor
+		ctx.fillStyle = "#FFEAEC";
+		ctx.fillRect(10, 160, 490, 500 - 160 - 10);
+		//kitchen wall
+		ctx.fillStyle = "#99B7D6";
+		ctx.fillRect (10, 10, 485, 150);
+		//outside path
+		ctx.fillStyle = "#AB9387";
+		ctx.fillRect(1000/2, 10, 490, 490);
 	}
 	run = function() {
-		this.openMenu();
+		this.menu();
 		this.checkObjective();
 	}
-	showMenu = function() {
-		if(this.day == 1) {
+	menu = function() {
+		if(this.menuOpen) {
+			ctx.fillStyle = "pink";
+			ctx.fillRect(200, 100, 600, 250);
 
-		}
-		if(this.day == 2) {
+			var message = [];
+			var lineSpacing = 20;
 
+			ctx.fillStyle = "grey";
+			ctx.font = '24px serif';
+			ctx.textAlign = "center";
+			//ctx.fillText("day" + day, );
+			ctx.font = '12px serif';
+			ctx.fillText("press 'esc' to close", 745, 340);
+
+			if(this.day == 1) {
+				message = ["welcome. the time has come,", 
+				"and you are the kin of chef!", 
+				"your first task is simple--make one cheese pizza.",
+				"milk your cow, harvest your tomatoes and wheat,", 
+				"then use the tools in your kitchen.",
+				"good luck!"];
+
+				ctx.fillStyle = "white";
+				ctx.font = '18px serif';
+				ctx.textAlign = "left";
+				for(var pos = 0; pos < message.length; pos++) {
+					ctx.fillText(message[pos], 430, 180 + (lineSpacing*pos));			
+				}
+			}
+			if(this.day == 2) {
+
+			}
 		}
 	}
 	checkObjective = function() {
@@ -767,14 +807,28 @@ class ArbitraryName {
 					this.objectiveMet = true;
 		}
 	}
+	nextDay = function() {
+		this.day++;
+		pizzasBaked = [];
+		raccoon.x = 200;
+		raccoon.y = 200;
+	}
 }
 
+var pizzeria = new Pizzeria();
+
 //walls
-var leftBound = new Wall(0, 0, 10, canvas.height);
-var topBound = new Wall(0, 0, canvas.width, 10);
-var rightBound = new Wall(canvas.width - 10, 0, 10, canvas.height);
-var bottomBound = new Wall(0, canvas.height - 10, canvas.width, 10);
-var centerTopBound = new Wall(canvas.width/2 - 5, 0, 10, canvas.height/2);
+var leftBound = new Wall(0, 0, 10, canvas.height, "#3D3B3C");
+var topBound = new Wall(0, 0, canvas.width, 10, "#3D3B3C");
+var rightBound = new Wall(canvas.width - 10, 0, 10, canvas.height, "#3D3B3C");
+var bottomBound = new Wall(0, canvas.height - 10, canvas.width, 10, "#3D3B3C");
+
+var centerTopBound = new Wall(canvas.width/2 - 5, 0, 10, 280, "#3D3B3C");
+var centerBottomBound = new Wall(canvas.width/2 - 5, 400, 10, 90, "#3D3B3C");
+
+var pastureBoundLeft = new Wall(505, 10 + 200 - 10, 485/2 - 60, 10, "none");
+var pastureBoundRight = new Wall(505 + 485/2 + 60, 10 + 200 - 10, 485/2 - 60, 10, "none");
+
 
 //farm/garden
 var pasture = new Pasture();
@@ -796,7 +850,8 @@ var stove = new Appliance("stove", stoveImg0, stoveImg1, 180, 50, 80, 150, tomat
 
 var walls = [];
 walls.push(leftBound, rightBound, topBound, bottomBound); //perimeter
-walls.push(centerTopBound); //interior walls
+walls.push(centerTopBound, centerBottomBound); //interior walls
+walls.push(pastureBoundLeft, pastureBoundRight);
 walls.push(refrigerator, pizzaOven, stove); //interior objects
 
 var clickables = [];
@@ -817,6 +872,8 @@ raccoonImg.onload = function () {
 function animate () {
 	clearBackground();
 
+	pizzeria.draw();
+
 	pasture.draw();
 	garden.draw();
 
@@ -827,4 +884,7 @@ function animate () {
 		walls[w].draw();
 	for (var m in menus)
 		menus[m].drawMenu();
+
+	pizzeria.run();
+
 }
