@@ -1,8 +1,18 @@
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d");
 
-var raccoonImg = new Image();
-raccoonImg.src = "images/raccoonV1.png";
+var raccoonLeftImg = new Image();
+raccoonLeftImg.src = "images/raccoonLeft.png";
+var raccoonRightImg = new Image();
+raccoonRightImg.src = "images/raccoonRight.png";
+var raccoonLeftAImg = new Image();
+raccoonLeftAImg.src = "images/raccoonLeftA.png";
+var raccoonLeftBImg = new Image();
+raccoonLeftBImg.src = "images/raccoonLeftB.png";
+var raccoonRightAImg = new Image();
+raccoonRightAImg.src = "images/raccoonRightA.png";
+var raccoonRightBImg = new Image();
+raccoonRightBImg.src = "images/raccoonRightB.png";
 
 var refrigeratorImg = new Image();
 refrigeratorImg.src = "images/tempRefrigerator.jpg";
@@ -16,6 +26,16 @@ var stoveImg0 = new Image();
 stoveImg0.src = "images/tempStove0.jpg";
 var stoveImg1 = new Image();
 stoveImg1.src = "images/tempStove1.jpg";
+
+var cheesePressImg0 = new Image();
+cheesePressImg0.src = "images/cheesePressImg0.png";
+var cheesePressImg1 = new Image();
+cheesePressImg1.src = "images/cheesePressImg1.png";
+
+var mixerImg0 = new Image();
+mixerImg0.src = "images/mixerImg0.png";
+var mixerImg1 = new Image();
+mixerImg1.src = "images/mixerImg1.png";
 
 var forwardCowImg = new Image();
 forwardCowImg.src = "images/cowRight.png";
@@ -32,8 +52,21 @@ tomatoPlantImg0.src = "images/tempTomatoPlant0.jpg";
 var tomatoPlantImg1 = new Image();
 tomatoPlantImg1.src = "images/tempTomatoPlant1.jpg";
 
+var wheatPlantImg0 = new Image();
+wheatPlantImg0.src = "images/wheatPlantImg0.jpg";
+var wheatPlantImg1 = new Image();
+wheatPlantImg1.src = "images/wheatPlantImg1.jpg";
+
 var cheesePizzaImg = new Image();
 cheesePizzaImg.src = "images/cheesePizza.jpg";
+var pepperoniPizzaImg = new Image();
+pepperoniPizzaImg.src = "images/pepperoniPizza.png";
+//var olivePizzaImg = new Image();
+//olivePizzaImg.src = "images/olivePizza.png";
+//var hawaiianPizzaImg = new Image();
+//hawaiianPizzaImg.src = "images/hawaiianPizza.png";
+//var everythingPizzaImg = new Image();
+//everythingPizzaImg.src = "images.everythingPizza.png";
 
 function clearBackground() {
   ctx.fillStyle = "white";
@@ -64,6 +97,10 @@ function handleKeyDown(event) {
 			menus[m].menuOpen = false;
 			pizzeria.menuOpen = false;
 	}
+
+	else if(event.key == 'ArrowRight')
+		if(pizzeria.objectiveMet)
+			pizzeria.nextDay();
 
 	if(pizzaOven.menuOpen) {
 		if(event.key == '1')
@@ -143,14 +180,18 @@ class Ingredient {
 }
 
 var wheat = new Ingredient("wheat", tomatoImg, 0);
-var dough = new Ingredient("dough", tomatoImg, 1);
+var dough = new Ingredient("dough", tomatoImg, 0);
 var tomato = new Ingredient("tomato", tomatoImg, 0);
-var sauce = new Ingredient("sauce", tomatoImg, 1);
+var sauce = new Ingredient("sauce", tomatoImg, 0);
 var milk = new Ingredient("milk", tomatoImg, 0);
-var cheese = new Ingredient("cheese", tomatoImg, 1); //replace images with the correct ones later
+var cheese = new Ingredient("cheese", tomatoImg, 0); //replace images with the correct ones later
+var peperoni = new Ingredient("peperoni", tomatoImg, 0);
+var ham = new Ingredient("ham", tomatoImg, 0);
+var olive = new Ingredient("olive", tomatoImg, 0);
+var pineapple = new Ingredient("pineapple", tomatoImg, 0); 
 
-var ingredients = [wheat, dough, tomato, sauce, milk, cheese];
-var pizzaIngredients = [dough, sauce, cheese];
+var ingredients = [wheat, dough, tomato, sauce, milk, cheese, peperoni, ham, olive, pineapple];
+var pizzaIngredients = [dough, sauce, cheese, peperoni, ham, olive, pineapple];
 
 class Plant {
 	constructor(name, img0, img1, canHarvest, num, harvestNum) {
@@ -209,11 +250,11 @@ class Garden {
 				ctx.drawImage(plants[pos].img0, plants[pos].x, plants[pos].y, plants[pos].width, plants[pos].height);
 			}			
 
-			this.currImg++;
+			this.currPlant++;
 			if(this.currImg == this.numColumns) {
 				this.currImg = 0;
 				this.currRow++;
-			}					
+			}				
 		}
 	}
 }
@@ -222,9 +263,9 @@ class Cow {
 	constructor(x, y) {
 		this.x = x;
 		this.y = y;
-		this.vx = 1;
-		this.vy = .5;
-		this.width = 80;
+		this.vx = .5;
+		this.vy = .25;
+		this.width = 100;
 		this.height = 80;
 
 		this.canMilk = true;
@@ -238,10 +279,10 @@ class Cow {
 		}
 
 		if (this.vx <= 0) {
-			ctx.drawImage(forwardCowImg, this.x, this.y, this.width, this.height);
+			ctx.drawImage(forwardCowImg, 0, 10, 100, 80, this.x, this.y, this.width, this.height);
 		}
 		else { 
-			ctx.drawImage(backwardCowImg, this.x, this.y, this.width, this.height); 
+			ctx.drawImage(backwardCowImg, 0, 10, 100, 80, this.x, this.y, this.width, this.height); 
 		}
 	
 		this.y += this.vy;
@@ -302,7 +343,7 @@ class Raccoon {
 		this.y = 200;
 
 		this.width = 100;
-		this.height = 100;
+		this.height = 90;
 
 		this.speed = 5;
 
@@ -310,17 +351,24 @@ class Raccoon {
 		this.movingRight = false;
 		this.movingUp = false;
 		this.movingDown = false;
+
+		this.lastDirection = "right";
+		this.count = 0;
+		this.currImg = 0;
+		this.images = [raccoonRightImg, raccoonRightAImg, raccoonRightBImg];
 	}
 
 	goLeft = function() {
 		this.stopAll();
 		this.movingLeft = true;
+		this.lastDirection = "left";
 		//this.currentSpriteSheet = this.leftSpriteSheet;
 		//this.currImage = 0;
 	}
 	goRight = function() {
 		this.stopAll();
 		this.movingRight = true;
+		this.lastDirection = "right";
 		//this.currentSpriteSheet = this.rightSpriteSheet;
 		//this.currImage = 0;
 	}
@@ -357,14 +405,9 @@ class Raccoon {
 		if(this.movingRight) {
 			this.x += this.speed;
 		}
+
 		//collision detection logic
 		this.collisionAboutToHappen = false;
-
-	  	//check each wall for a collision with the thing
-	  	/*for(var p in walls) {
-			if(detectCollision(walls[p], this)) {
-				collisionAboutToHappen = true;
-			}*/
 		
 		for(var currWall = 0; currWall < walls.length; currWall++) {
 			this.collisionAboutToHappen = detectCollision(this, walls[currWall]);
@@ -381,31 +424,31 @@ class Raccoon {
 
 	  }
 	draw = function() {
-    /*
-		var ssX = 0, ssY = 0;
-
-		if(this.movingRight) {
-			ssX = this.currImage*this.imageWidth;
+		if(!this.movingRight && !this.movingLeft && !this.movingUp && !this.movingDown) {
+			this.currImg = 0;
+			if(this.lastDirection == "right")
+				ctx.drawImage(raccoonRightImg, 0, 10, 100, 90, this.x, this.y, 100, 90);
+			if(this.lastDirection == "left")
+				ctx.drawImage(raccoonLeftImg, 0, 10, 100, 90, this.x, this.y, 100, 90);
 		}
-		else if(this.movingLeft) {
-			ssX = this.leftSpriteSheet.width - (this.currImage + 1)*this.imageWidth;
-		}
-		else if(this.movingUp) {
-			ssY = this.upSpriteSheet.height - (this.currImage + 1)*this.imageHeight;
-		}
-		else if(this.movingDown) {
-			ssY = this.currImage*this.imageHeight;
-		}
+		else {
+			if(this.movingRight)
+				this.images = [raccoonRightImg, raccoonRightAImg, raccoonRightBImg];
+			if(this.movingLeft)
+				this.images = [raccoonLeftImg, raccoonLeftAImg, raccoonLeftBImg];
+			if(this.movingUp || this.movingDown) {
+				if(this.lastDirection == "right")
+					this.images = [raccoonRightImg, raccoonRightAImg, raccoonRightBImg];
+				else if (this.lastDirection == "left")
+					this.images = [raccoonLeftImg, raccoonLeftAImg, raccoonLeftBImg];
+			}
 
-		context.drawImage( this.currentSpriteSheet,
-						ssX , ssY, this.imageWidth, this.imageHeight,
-						this.x, this.y, this.imageWidth, this.imageHeight );
-		this.currImage++;
-		this.currImage %= this.numbImages;
-    */
-
-    ctx.drawImage(raccoonImg, this.x, this.y);
-
+			ctx.drawImage(this.images[this.currImg], 0, 10, 100, 90, this.x, this.y, 100, 90);
+			this.count++;
+			if(this.count % 2 == 0) this.currImg++;
+			if(this.currImg == 2)
+				this.currImg = 0;
+		}
 	}
 }
 
@@ -446,9 +489,13 @@ class Refrigerator {
 
 	drawMenu = function() {
 		if(this.menuOpen) {
-			//ctx.drawImage(refrigeratorMenuBackground, 100, 100, 500, 500);
 			ctx.fillStyle = "pink";
 			ctx.fillRect(300, 50, 400, 400);
+
+			ctx.fillStyle = "white";
+			ctx.font = '32px serif';
+			ctx.textAlign = "center";
+			ctx.fillText("refrigerator", 500, 90);
 
 			this.numColumns = 4;
 			this.imgSpacingX = 100;
@@ -456,13 +503,13 @@ class Refrigerator {
 			this.currImg = 0;
 			this.currRow = 0;
 			for(var pos = 0; pos < ingredients.length; pos++) {
-				ctx.drawImage(ingredients[pos].img, 310 + (this.imgSpacingX*this.currImg), 60 + (this.imgSpacingY*this.currRow), 50, 50);
+				ctx.drawImage(ingredients[pos].img, 325 + (this.imgSpacingX*this.currImg), 120 + (this.imgSpacingY*this.currRow), 50, 50);
 
 				ctx.fillStyle = "white";
 				ctx.font = '12px serif';
 				ctx.textAlign = "center";
-				ctx.fillText(ingredients[pos].name, 310 + (this.imgSpacingX*this.currImg) + 25, 60 + (this.imgSpacingY*this.currRow) + 60);
-				ctx.fillText(ingredients[pos].num, 310 + (this.imgSpacingX*this.currImg) + 25, 60 + (this.imgSpacingY*this.currRow) + 75);
+				ctx.fillText(ingredients[pos].name, 325 + (this.imgSpacingX*this.currImg) + 25, 120 + (this.imgSpacingY*this.currRow) + 60);
+				ctx.fillText(ingredients[pos].num, 325 + (this.imgSpacingX*this.currImg) + 25, 120 + (this.imgSpacingY*this.currRow) + 75);
 
 				this.currImg++;
 				if(this.currImg == this.numColumns) {
@@ -542,10 +589,24 @@ class Pizza {
 		if(this.name = "cheese pizza") {
 			this.ingredients.push(dough, sauce, cheese);
 		}
+		else if(this.name = "peperoni pizza") {
+			this.ingredients.push(dough, sauce, cheese, peperoni);
+		}
+		else if(this.name = "olive pizza") {
+			this.ingredients.push(dough, sauce, cheese, olive);
+		}
+		else if(this.name = "hawaiian pizza") {
+			this.ingredients.push(dough, sauce, cheese, ham, pineapple);
+		}
 	}
 }
 
 var cheesePizza = new Pizza("cheese pizza", cheesePizzaImg, 7);
+var peperoniPizza = new Pizza("peperoni pizza", pepperoniPizzaImg, 7);
+var olivePizza = new Pizza("olive pizza", cheesePizzaImg, 7);
+var hawaiianPizza = new Pizza("hawaiian pizza", cheesePizzaImg, 7);
+
+//var pizzas = [cheesePizza, peperoniPizza, olivePizza, hawaiianPizza];
 var pizzas = [cheesePizza];
 
 class PizzaOven {
@@ -610,39 +671,40 @@ class PizzaOven {
 			}
 
 			//display the pizzas
-			this.possPizzas = 0;
-			this.pizzaSpacingX = 80;
-			this.pizzaSpacingY = 80;
-			this.currPizza = 0;
-			this.currPizzaRow = 0;
-			this.numPizzaColumns = 2;
-			this.pizzaNum = 1;
+			var possPizzas = 0;
+			var pizzaSpacingX = 80;
+			var pizzaSpacingY = 80;
+			var currPizza = 0;
+			var currPizzaRow = 0;
+			var pizzaNum = 1;
 			ctx.fillStyle = "white";
 			ctx.font = '18px serif';
 			ctx.textAlign = "center";
 			ctx.fillText("pizzas", 650 + 50 + 15, 70);
 			for(var pos = 0; pos < pizzas.length; pos++) {
 				if(pizzas[pos].canMake) {
-					this.possPizzas++;
-					// ctx.drawImage(pizzas[pos].img, 650 + (this.pizzaSpacingX*this.currPizza), 80 + (this.pizzaSpacingY*this.currPizzaRow), 50, 50);
-					ctx.drawImage(pizzas[pos].img, 660 + 80 - (this.pizzaSpacingX*this.currPizza), 80 + (this.pizzaSpacingY*this.currPizzaRow), 50, 50);
-
+					var currName = pizzas[pos].name;
+					possPizzas++;
+					ctx.drawImage(pizzas[pos].img, 660 + 80 - (pizzaSpacingX*currPizza), 80 + (pizzaSpacingY*currPizzaRow), 50, 50);
 
 					ctx.fillStyle = "white";
 					ctx.font = '12px serif';
 					ctx.textAlign = "center";
-					ctx.fillText(pizzas[pos].name, 660 + 80 - (this.pizzaSpacingX*this.currPizza) + 25, 80 + (this.pizzaSpacingY*this.currPizzaRow) + 60);
-					ctx.fillText(this.pizzaNum, 660 + 80 - (this.pizzaSpacingX*this.currPizza) + 25, 80 + (this.pizzaSpacingY*this.currPizzaRow) + 75);
-				}
-				if(this.currPizza == this.numpizzaColumns - 1) {
-					this.currPizza = 0;
-					this.currPizzaRow++;
-				}
-				this.currPizza++;					
+					ctx.fillText(currName, 660 + 80 - (pizzaSpacingX*currPizza) + 25, 80 + (pizzaSpacingY*currPizzaRow) + 60);
+					// ctx.fillText(pizzas[pos].name, 660 + 80 - (pizzaSpacingX*currPizza) + 25, 80 + (pizzaSpacingY*currPizzaRow) + 60);
+					ctx.fillText(possPizzas, 660 + 80 - (pizzaSpacingX*currPizza) + 25, 80 + (pizzaSpacingY*currPizzaRow) + 75);
+
+					currPizza++;
+
+					if(currPizza == 2) {
+						currPizza = 0;
+						currPizzaRow++;	
+					}
+				}	
 			}
 
 			//display message if no pizzas possible
-			if(this.possPizzas == 0) {
+			if(possPizzas == 0) {
 				ctx.fillStyle = "white";
 				ctx.font = '18px serif';
 				ctx.textAlign = "center";
@@ -780,6 +842,10 @@ class Pizzeria {
 			ctx.font = '12px serif';
 			ctx.fillText("press 'esc' to close", 745, 340);
 
+			var ghostRaccoonImg = new Image();
+			ghostRaccoonImg.src = "images/ghostRaccoon.jpg";
+			ctx.drawImage(ghostRaccoonImg, 250, 150, 150, 150);
+
 			if(this.day == 1) {
 				message = ["welcome. the time has come,", 
 				"and you are the kin of chef!", 
@@ -787,31 +853,86 @@ class Pizzeria {
 				"milk your cow, harvest your tomatoes and wheat,", 
 				"then use the tools in your kitchen.",
 				"good luck!"];
-
-				ctx.fillStyle = "white";
-				ctx.font = '18px serif';
-				ctx.textAlign = "left";
-				for(var pos = 0; pos < message.length; pos++) {
-					ctx.fillText(message[pos], 430, 180 + (lineSpacing*pos));			
-				}
 			}
 			if(this.day == 2) {
-
+				message = ["it is a new day! you have made pizza!",
+				"congratulations chef! with a new day comes a new",
+				"task! today you will make a pepperoni pizza",
+				"you received pepperoni from the butcher today.",
+				"remember, the pizzeria is in your hands now.",
+				"you must not fail!!"];
+			}
+			if(this.day == 3) {
+				message = ["hello chef!",
+				"today's task is simple--two cheese pizzas",
+				"and one olive pizza!",
+				"you have everything you need available to you.",
+				"you closer to greatness!!",
+				"good luck, chef!"];
+			}
+			ctx.fillStyle = "white";
+			ctx.font = '18px serif';
+			ctx.textAlign = "left";
+			for(var pos = 0; pos < message.length; pos++) {
+				ctx.fillText(message[pos], 430, 180 + (lineSpacing*pos));			
 			}
 		}
 	}
 	checkObjective = function() {
+		ctx.fillStyle = "white";
+		ctx.fillRect(890, 440, 100, 50);
+		ctx.fillStyle = "black";
+		ctx.font = '10px serif';
+		ctx.textAlign = "center";
+		var objective;
 		if(this.day == 1) {
+			objective = "bake one cheese pizza";
+			for(var pos = 0; pos < pizzasBaked.length; pos ++)
+				if(pizzasBaked[pos] == cheesePizza)
+					this.objectiveMet = true;
+		}
+		if(this.day == 2) {
+			objective = "pepperoni pizza";
+			for(var pos = 0; pos < pizzasBaked.length; pos++)
+				if(pizzasBaked[pos] == peperoniPizza)
+					this.objectiveMet = true;
+		}
+		if(this.day == 3) {
+			objective = "2 cheese, 1 olive"
+			var cheesePizzaCount = 0;
 			for(var p in pizzasBaked)
 				if(p == cheesePizza)
+					cheesePizzaCount++;
+			for(var p in pizzasBaked)
+				if(p == olivePizza && cheesePizzaCount >= 2) {
 					this.objectiveMet = true;
+				}
+		}
+		if(this.objectiveMet) {
+			ctx.fillText("objective met", 940, 455);
+			ctx.fillText("press -> to proceed", 940, 470);
+			ctx.fillText("to day " + (this.day + 1), 940, 485);
+		}
+		else {
+			ctx.fillText("objective:", 940, 455);
+			ctx.fillText(objective, 940, 470);
 		}
 	}
 	nextDay = function() {
 		this.day++;
+		this.objectiveMet = false;
 		pizzasBaked = [];
 		raccoon.x = 200;
 		raccoon.y = 200;
+		this.menuOpen = true;
+
+		for(var pos = 0; pos < ingredients.length; pos++)
+			ingredients[pos].canHarvest = true;
+
+		//new day gifts/supplies
+		if(this.day == 2) {
+			peperoni.num = 3;
+		}
 	}
 }
 
@@ -833,30 +954,30 @@ var pastureBoundRight = new Wall(505 + 485/2 + 60, 10 + 200 - 10, 485/2 - 60, 10
 //farm/garden
 var pasture = new Pasture();
 var garden = new Garden();
-//var wheatPlant = new Plant("wheat", wheatImg, 0, 0, true, 1);
+var wheatPlant = new Plant("wheat", wheatPlantImg0,wheatPlantImg1, true, 1, 3);
 var tomatoPlant = new Plant("tomato", tomatoPlantImg0, tomatoPlantImg1, true, 1, 3);
   //add all other possible plants, set num to zero
 
 
 var plants = [];
-plants.push(tomatoPlant);
+plants.push(tomatoPlant, wheatPlant);
 
 //appliances
 var refrigerator = new Refrigerator();
 var pizzaOven = new PizzaOven();
-//var mixer = new Appliance("mixer", mixerImg0, mixerImg1, 10, 300, 80, 150, wheat, dough);
+var mixer = new Appliance("mixer", mixerImg0, mixerImg1, 380, 50, 80, 120, wheat, dough);
 var stove = new Appliance("stove", stoveImg0, stoveImg1, 180, 50, 80, 150, tomato, sauce);
-//var cheesePress = new Appliance("cheese press", cheesePressImg0, cheesePressImg1, 200, 300, 50, 100, milk, cheese);
+var cheesePress = new Appliance("cheese press", cheesePressImg0, cheesePressImg1, 30, 345, 120, 150, milk, cheese);
 
 var walls = [];
 walls.push(leftBound, rightBound, topBound, bottomBound); //perimeter
 walls.push(centerTopBound, centerBottomBound); //interior walls
 walls.push(pastureBoundLeft, pastureBoundRight);
-walls.push(refrigerator, pizzaOven, stove); //interior objects
+walls.push(refrigerator, pizzaOven, stove, cheesePress, mixer); //interior objects
 
 var clickables = [];
-clickables.push(refrigerator, pizzaOven, stove);
-clickables.push(tomatoPlant);
+clickables.push(refrigerator, pizzaOven, stove, cheesePress, mixer);
+clickables.push(tomatoPlant, wheatPlant);
 for (var pos = 0; pos < cows.length; pos++) clickables.push(cows[pos]);
 
 var menus = [];
@@ -864,7 +985,7 @@ menus.push(refrigerator, pizzaOven);
 
 var raccoon = new Raccoon();
 
-raccoonImg.onload = function () {
+raccoonLeftImg.onload = function () {
 	setInterval(animate, 50);
 }
   
