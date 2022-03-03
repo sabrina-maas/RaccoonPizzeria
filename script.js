@@ -14,6 +14,9 @@ raccoonRightAImg.src = "images/raccoonRightA.png";
 var raccoonRightBImg = new Image();
 raccoonRightBImg.src = "images/raccoonRightB.png";
 
+var ghostRaccoonImg = new Image();
+ghostRaccoonImg.src = "images/ghostRaccoon.jpg";
+
 var refrigeratorImg = new Image();
 refrigeratorImg.src = "images/tempRefrigerator.jpg";
 
@@ -56,6 +59,11 @@ var wheatPlantImg0 = new Image();
 wheatPlantImg0.src = "images/wheatPlantImg0.jpg";
 var wheatPlantImg1 = new Image();
 wheatPlantImg1.src = "images/wheatPlantImg1.jpg";
+
+var pineapplePlantImg0 = new Image();
+pineapplePlantImg0.src = "images/pineapplePlant0.jpg";
+var pineapplePlantImg1 = new Image();
+pineapplePlantImg1.src ="images/pineapplePlant1.jpg";
 
 var cheesePizzaImg = new Image();
 cheesePizzaImg.src = "images/cheesePizza.jpg";
@@ -251,8 +259,8 @@ class Garden {
 			}			
 
 			this.currPlant++;
-			if(this.currImg == this.numColumns) {
-				this.currImg = 0;
+			if(this.currPlant == this.numColumns) {
+				this.currPlant = 0;
 				this.currRow++;
 			}				
 		}
@@ -269,7 +277,7 @@ class Cow {
 		this.height = 80;
 
 		this.canMilk = true;
-		this.milkCooldown = 60000;
+		this.milkCooldown = 30000;
 	}
 
 	move = function() {
@@ -308,7 +316,7 @@ class Cow {
 }
 
 var cow1 = new Cow(550, 50);
-var cow2 = new Cow(canvas.width / 7, canvas.width / 2);
+var cow2 = new Cow(750, 60);
 var cow3 = new Cow(canvas.width / 2, canvas.width / 5);
 var cow4 = new Cow(canvas.width / 3, canvas.width / 4);
 
@@ -586,28 +594,31 @@ class Pizza {
 		this.canMake = false;
 		
 		this.ingredients = [];
-		if(this.name = "cheese pizza") {
+		if(this.name == "cheese pizza") {
 			this.ingredients.push(dough, sauce, cheese);
 		}
-		else if(this.name = "peperoni pizza") {
+		else if(this.name == "peperoni pizza") {
 			this.ingredients.push(dough, sauce, cheese, peperoni);
 		}
-		else if(this.name = "olive pizza") {
+		else if(this.name == "olive pizza") {
 			this.ingredients.push(dough, sauce, cheese, olive);
 		}
-		else if(this.name = "hawaiian pizza") {
+		else if(this.name == "hawaiian pizza") {
 			this.ingredients.push(dough, sauce, cheese, ham, pineapple);
+		}
+		else if(this.name == "everything pizza") {
+			this.ingredients.push(dough, sauce, cheese, peperoni, olive, ham, pineapple);
 		}
 	}
 }
 
 var cheesePizza = new Pizza("cheese pizza", cheesePizzaImg, 7);
-var peperoniPizza = new Pizza("peperoni pizza", pepperoniPizzaImg, 7);
-var olivePizza = new Pizza("olive pizza", cheesePizzaImg, 7);
-var hawaiianPizza = new Pizza("hawaiian pizza", cheesePizzaImg, 7);
+var peperoniPizza = new Pizza("peperoni pizza", pepperoniPizzaImg, 8);
+var olivePizza = new Pizza("olive pizza", cheesePizzaImg, 8);
+var hawaiianPizza = new Pizza("hawaiian pizza", cheesePizzaImg, 10);
+var everythingPizza = new Pizza("everything pizza", cheesePizzaImg, 0);
 
-//var pizzas = [cheesePizza, peperoniPizza, olivePizza, hawaiianPizza];
-var pizzas = [cheesePizza];
+var pizzas = [cheesePizza, peperoniPizza, olivePizza, hawaiianPizza];
 
 class PizzaOven {
 	constructor() {
@@ -676,31 +687,27 @@ class PizzaOven {
 			var pizzaSpacingY = 80;
 			var currPizza = 0;
 			var currPizzaRow = 0;
-			var pizzaNum = 1;
 			ctx.fillStyle = "white";
 			ctx.font = '18px serif';
 			ctx.textAlign = "center";
 			ctx.fillText("pizzas", 650 + 50 + 15, 70);
 			for(var pos = 0; pos < pizzas.length; pos++) {
 				if(pizzas[pos].canMake) {
-					var currName = pizzas[pos].name;
 					possPizzas++;
 					ctx.drawImage(pizzas[pos].img, 660 + 80 - (pizzaSpacingX*currPizza), 80 + (pizzaSpacingY*currPizzaRow), 50, 50);
 
 					ctx.fillStyle = "white";
 					ctx.font = '12px serif';
 					ctx.textAlign = "center";
-					ctx.fillText(currName, 660 + 80 - (pizzaSpacingX*currPizza) + 25, 80 + (pizzaSpacingY*currPizzaRow) + 60);
-					// ctx.fillText(pizzas[pos].name, 660 + 80 - (pizzaSpacingX*currPizza) + 25, 80 + (pizzaSpacingY*currPizzaRow) + 60);
+					ctx.fillText(pizzas[pos].name, 660 + 80 - (pizzaSpacingX*currPizza) + 25, 80 + (pizzaSpacingY*currPizzaRow) + 60);
 					ctx.fillText(possPizzas, 660 + 80 - (pizzaSpacingX*currPizza) + 25, 80 + (pizzaSpacingY*currPizzaRow) + 75);
 
 					currPizza++;
-
 					if(currPizza == 2) {
 						currPizza = 0;
 						currPizzaRow++;	
 					}
-				}	
+				}
 			}
 
 			//display message if no pizzas possible
@@ -740,6 +747,7 @@ class PizzaOven {
 			pizzasBaked.push(this.selectedPizza);
 			this.state = 0;
 			this.checkIngredients(this.selectedPizza);
+			allTimePizzasBaked.push(this.selectedPizza);
 		}
 	}
 
@@ -782,6 +790,7 @@ class PizzaOven {
 }
 
 var pizzasBaked = [];
+var allTimePizzasBaked = [];
 
 class Shop {
 	constructor() {
@@ -835,15 +844,14 @@ class Pizzeria {
 			var message = [];
 			var lineSpacing = 20;
 
-			ctx.fillStyle = "grey";
+			ctx.fillStyle = "white";
 			ctx.font = '24px serif';
 			ctx.textAlign = "center";
-			//ctx.fillText("day" + day, );
+			ctx.fillText("day " + this.day, 550, 150);
+			ctx.fillStyle = "grey";
 			ctx.font = '12px serif';
 			ctx.fillText("press 'esc' to close", 745, 340);
 
-			var ghostRaccoonImg = new Image();
-			ghostRaccoonImg.src = "images/ghostRaccoon.jpg";
 			ctx.drawImage(ghostRaccoonImg, 250, 150, 150, 150);
 
 			if(this.day == 1) {
@@ -870,6 +878,21 @@ class Pizzeria {
 				"you closer to greatness!!",
 				"good luck, chef!"];
 			}
+			if(this.day == 4) {
+				message = ["good morning chef! it is a new day!",
+				"today you will make a hawaiian pizza!",
+				"you received a pineapple plant during the night!",
+				"use it wisely. i know that you can succeed!",
+				"good luck, chef."];
+			}
+			if(this.day == 5) {
+				message = ["hello chef...",
+				"today's task is...unique...",
+				"you must make an ~everything pizza~",
+				"...a pizza with...everything...",
+				"see you tomorrow!"];
+			}
+
 			ctx.fillStyle = "white";
 			ctx.font = '18px serif';
 			ctx.textAlign = "left";
@@ -900,22 +923,53 @@ class Pizzeria {
 		if(this.day == 3) {
 			objective = "2 cheese, 1 olive"
 			var cheesePizzaCount = 0;
-			for(var p in pizzasBaked)
-				if(p == cheesePizza)
+			for(var p = 0; p < pizzasBaked.length; p++)
+				if(pizzasBaked[p] == cheesePizza)
 					cheesePizzaCount++;
-			for(var p in pizzasBaked)
-				if(p == olivePizza && cheesePizzaCount >= 2) {
+			for(var p = 0; p < pizzasBaked.length; p++)
+				if(pizzasBaked[p] == olivePizza && cheesePizzaCount >= 2) {
 					this.objectiveMet = true;
 				}
 		}
+		if(this.day == 4) {
+			objective = "hawaiian pizza";
+			for(var p = 0; p < pizzasBaked.length; p++)
+				if(pizzasBaked[p] == hawaiianPizza)
+					this.objectiveMet = true;
+		}
+		if(this.day == 5) {
+			objective = "everything pizza";
+			for(var p = 0; p < pizzasBaked.length; p++)
+				if(pizzasBaked[p] == everythingPizza)
+					this.objectiveMet = true;
+		}
+		if(this.day == 6) {
+			var profit = 0;
+			for(var pos = 0; pos < allTimePizzasBaked.length; pos++)
+				profit += allTimePizzasBaked[pos].value;
+			ctx.fillStyle = "pink";
+			ctx.fillRect(0, 0, 1000, 500);
+			ctx.fillStyle = "white";
+			ctx.font = '24px serif';
+			ctx.textAlign = "center";
+			ctx.fillText("you died after consuming 'everything pizza'", 500, 150);
+			ctx.fillText("you made " + profit + " raccoon dollars", 500, 175);
+			ctx.fillText("refresh to restart", 500, 200);
+			ctx.drawImage(ghostRaccoonImg, 450, 250);
+			ctx.fillText('"we are together again!"', 500, 375);
+			ctx.fillText("-poppa raccoon", 500, 395);
+		}
+
 		if(this.objectiveMet) {
 			ctx.fillText("objective met", 940, 455);
 			ctx.fillText("press -> to proceed", 940, 470);
 			ctx.fillText("to day " + (this.day + 1), 940, 485);
 		}
 		else {
-			ctx.fillText("objective:", 940, 455);
-			ctx.fillText(objective, 940, 470);
+			if(this.day != 6) {
+				ctx.fillText("objective:", 940, 455);
+				ctx.fillText(objective, 940, 470);
+			}
 		}
 	}
 	nextDay = function() {
@@ -926,12 +980,32 @@ class Pizzeria {
 		raccoon.y = 200;
 		this.menuOpen = true;
 
-		for(var pos = 0; pos < ingredients.length; pos++)
-			ingredients[pos].canHarvest = true;
+		for(var pos = 0; pos < plants.length; pos++)
+			plants[pos].canHarvest = true;
+		for(var pos = 0; pos < cows.length; pos++) {
+			cows[pos].canMilk = true;
+		}
 
 		//new day gifts/supplies
 		if(this.day == 2) {
-			peperoni.num = 3;
+			peperoni.num = 50;
+			cows.push(cow2);
+			clickables.push(cow2);
+		}
+		if(this.day == 3) {
+			olive.num = 13;
+			plants.push(wheatPlant2, tomatoPlant2);
+			clickables.push(wheatPlant2, tomatoPlant2);
+		}
+		if(this.day == 4) {
+			plants.push(pineapplePlant, pineapplePlant2, pineapplePlant3);
+			clickables.push(pineapplePlant, pineapplePlant2, pineapplePlant3);
+			ham.num = 18
+			cows.push(cow3);
+			clickables.push(cow3);
+		}
+		if(this.day == 5) {
+			pizzas.push(everythingPizza);
 		}
 	}
 }
@@ -955,7 +1029,13 @@ var pastureBoundRight = new Wall(505 + 485/2 + 60, 10 + 200 - 10, 485/2 - 60, 10
 var pasture = new Pasture();
 var garden = new Garden();
 var wheatPlant = new Plant("wheat", wheatPlantImg0,wheatPlantImg1, true, 1, 3);
+var wheatPlant2 = new Plant("wheat", wheatPlantImg0,wheatPlantImg1, true, 1, 3);
 var tomatoPlant = new Plant("tomato", tomatoPlantImg0, tomatoPlantImg1, true, 1, 3);
+var tomatoPlant2 = new Plant("tomato", tomatoPlantImg0, tomatoPlantImg1, true, 1, 3);
+var pineapplePlant = new Plant("pineapple", pineapplePlantImg0, pineapplePlantImg1, true, 0, 1);
+var pineapplePlant2 = new Plant("pineapple", pineapplePlantImg0, pineapplePlantImg1, true, 0, 1);
+var pineapplePlant3 = new Plant("pineapple", pineapplePlantImg0, pineapplePlantImg1, true, 0, 1);
+
   //add all other possible plants, set num to zero
 
 
@@ -978,7 +1058,6 @@ walls.push(refrigerator, pizzaOven, stove, cheesePress, mixer); //interior objec
 var clickables = [];
 clickables.push(refrigerator, pizzaOven, stove, cheesePress, mixer);
 clickables.push(tomatoPlant, wheatPlant);
-for (var pos = 0; pos < cows.length; pos++) clickables.push(cows[pos]);
 
 var menus = [];
 menus.push(refrigerator, pizzaOven);
