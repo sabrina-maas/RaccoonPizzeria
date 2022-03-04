@@ -525,6 +525,9 @@ class Refrigerator {
 					this.currRow++;
 				}					
 			}	
+			ctx.fillStyle = "grey";
+			ctx.font = '12px serif';
+			ctx.fillText("press 'esc' to close", 500, 440);
 		}
 	}
 	  
