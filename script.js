@@ -83,6 +83,9 @@ function clearBackground() {
 
 document.addEventListener("keydown", handleKeyDown, true);
 function handleKeyDown(event) {
+	if(event.key == ' ');
+		if(pizzeria.day == 0)
+			pizzeria.nextDay();
 	if(event.key == 'w') {
 		if(!raccoon.movingUp)
 			raccoon.goUp();
@@ -720,6 +723,9 @@ class PizzaOven {
 					}
 				}
 			}
+			ctx.fillStyle = "white";
+			ctx.font = '12px serif';
+			ctx.fillText("press 'esc' to close", 500, 440);
 
 			//display message if no pizzas possible
 			if(possPizzas == 0) {
@@ -828,7 +834,7 @@ class Shop {
 
 class Pizzeria {
 	constructor() {
-		this.day = 1;
+		this.day = 0;
 		this.objectiveMet = false;
 		this.menuOpen = true;
 	}
@@ -919,6 +925,17 @@ class Pizzeria {
 		ctx.font = '10px serif';
 		ctx.textAlign = "center";
 		var objective;
+		if(this.day == 0) {
+			ctx.fillStyle = "pink";
+			ctx.fillRect(0, 0, 1000, 500);
+			ctx.fillStyle = "white";
+			ctx.font = '24px serif';
+			ctx.textAlign = "center";
+			ctx.fillText("press the spacebar to start", 500, 200);
+			ctx.font = '40px serif';
+			ctx.fillText("raccoon pizzeria", 500, 150);
+			ctx.drawImage(raccoonLeftImg, 450, 250);
+		}
 		if(this.day == 1) {
 			objective = "bake one cheese pizza";
 			for(var pos = 0; pos < pizzasBaked.length; pos ++)
@@ -977,7 +994,7 @@ class Pizzeria {
 			ctx.fillText("to day " + (this.day + 1), 940, 485);
 		}
 		else {
-			if(this.day != 6) {
+			if(this.day != 6 && this.day != 0) {
 				ctx.fillText("objective:", 940, 455);
 				ctx.fillText(objective, 940, 470);
 			}
@@ -1058,7 +1075,7 @@ var refrigerator = new Refrigerator();
 var pizzaOven = new PizzaOven();
 var mixer = new Appliance("mixer", mixerImg0, mixerImg1, 380, 50, 80, 120, wheat, dough);
 var stove = new Appliance("stove", stoveImg0, stoveImg1, 180, 50, 80, 150, tomato, sauce);
-var cheesePress = new Appliance("cheese press", cheesePressImg0, cheesePressImg1, 30, 345, 120, 150, milk, cheese);
+var cheesePress = new Appliance("cheese press", cheesePressImg0, cheesePressImg1, 30, 340, 120, 150, milk, cheese);
 
 var walls = [];
 walls.push(leftBound, rightBound, topBound, bottomBound); //perimeter
