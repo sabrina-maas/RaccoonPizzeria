@@ -69,12 +69,12 @@ var cheesePizzaImg = new Image();
 cheesePizzaImg.src = "images/cheesePizza.jpg";
 var pepperoniPizzaImg = new Image();
 pepperoniPizzaImg.src = "images/pepperoniPizza.png";
-//var olivePizzaImg = new Image();
-//olivePizzaImg.src = "images/olivePizza.png";
-//var hawaiianPizzaImg = new Image();
-//hawaiianPizzaImg.src = "images/hawaiianPizza.png";
-//var everythingPizzaImg = new Image();
-//everythingPizzaImg.src = "images.everythingPizza.png";
+var olivePizzaImg = new Image();
+olivePizzaImg.src = "images/olivePizza.jpg";
+var hawaiianPizzaImg = new Image();
+hawaiianPizzaImg.src = "images/hawaiianPizza.jpg";
+var everythingPizzaImg = new Image();
+everythingPizzaImg.src = "images/everythingPizza.jpg";
 
 function clearBackground() {
   ctx.fillStyle = "white";
@@ -317,8 +317,8 @@ class Cow {
 
 var cow1 = new Cow(550, 50);
 var cow2 = new Cow(750, 60);
-var cow3 = new Cow(canvas.width / 2, canvas.width / 5);
-var cow4 = new Cow(canvas.width / 3, canvas.width / 4);
+var cow3 = new Cow(550, 50);
+var cow4 = new Cow(850, 60);
 
 var cows = [cow1]; //add other cows to cow array as cows purchased in game
 
@@ -614,9 +614,9 @@ class Pizza {
 
 var cheesePizza = new Pizza("cheese pizza", cheesePizzaImg, 7);
 var peperoniPizza = new Pizza("peperoni pizza", pepperoniPizzaImg, 8);
-var olivePizza = new Pizza("olive pizza", cheesePizzaImg, 8);
-var hawaiianPizza = new Pizza("hawaiian pizza", cheesePizzaImg, 10);
-var everythingPizza = new Pizza("everything pizza", cheesePizzaImg, 0);
+var olivePizza = new Pizza("olive pizza", olivePizzaImg, 8);
+var hawaiianPizza = new Pizza("hawaiian pizza", hawaiianPizzaImg, 10);
+var everythingPizza = new Pizza("everything pizza", everythingPizzaImg, 0);
 
 var pizzas = [cheesePizza, peperoniPizza, olivePizza, hawaiianPizza];
 
@@ -682,6 +682,14 @@ class PizzaOven {
 			}
 
 			//display the pizzas
+			ctx.fillStyle = "white";
+			ctx.font = '30px serif';
+			ctx.textAlign = "center";
+			ctx.fillText("pizza oven", 500, 115);
+
+			ctx.font = '12px serif';
+			ctx.fillText("press the number that corresponds to the pizza you would like", 500, 410);
+
 			var possPizzas = 0;
 			var pizzaSpacingX = 80;
 			var pizzaSpacingY = 80;
@@ -1058,6 +1066,7 @@ walls.push(refrigerator, pizzaOven, stove, cheesePress, mixer); //interior objec
 var clickables = [];
 clickables.push(refrigerator, pizzaOven, stove, cheesePress, mixer);
 clickables.push(tomatoPlant, wheatPlant);
+clickables.push(cow1);
 
 var menus = [];
 menus.push(refrigerator, pizzaOven);
