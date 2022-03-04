@@ -931,7 +931,7 @@ class Pizzeria {
 			ctx.fillStyle = "white";
 			ctx.font = '24px serif';
 			ctx.textAlign = "center";
-			ctx.fillText("press the spacebar to start", 500, 200);
+			ctx.fillText("press any key to start", 500, 200);
 			ctx.font = '40px serif';
 			ctx.fillText("raccoon pizzeria", 500, 150);
 			ctx.drawImage(raccoonLeftImg, 450, 250);
